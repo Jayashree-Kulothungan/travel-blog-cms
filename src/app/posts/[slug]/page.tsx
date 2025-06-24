@@ -3,7 +3,7 @@ import client from '../../../lib/apolloClient';
 import { GetPostBySlugQuery } from '@/generated/graphql';
 import { Metadata } from 'next';
 
-type Params = {
+type PageProps = {
   params: {
     slug: string;
   };
@@ -29,7 +29,7 @@ const GET_POST_BY_SLUG = gql`
   }
 `;
 
-export default async function PostPage({ params }: Params) {
+export default async function PostPage({ params }: PageProps) {
   const slug = params.slug;
 
   const { data } = await client.query<GetPostBySlugQuery>({
@@ -78,7 +78,7 @@ export default async function PostPage({ params }: Params) {
   );
 }
 
-export async function generateMetadata({ params }: Params): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = params;
 
   const { data } = await client.query<GetPostBySlugQuery>({
