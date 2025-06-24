@@ -1,7 +1,8 @@
 import { gql } from '@apollo/client';
 import client from '../../../lib/apolloClient';
 import { GetPostBySlugQuery } from '@/generated/graphql';
-import { Metadata } from 'next';
+import { Metadata, ResolvingMetadata } from 'next';
+import Image from 'next/image';
 
 type PageProps = {
   params: {
@@ -51,9 +52,11 @@ export default async function PostPage({ params }: PageProps) {
       <a href="/" className="text-blue-600 hover:underline text-sm mb-4 block">← Back to Home</a>
       
       {image && (
-        <img
+        <Image
           src={image}
           alt={title}
+          width={1200}
+          height={400}
           className="w-full h-64 object-cover rounded mb-6"
         />
       )}
@@ -78,7 +81,10 @@ export default async function PostPage({ params }: PageProps) {
   );
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: PageProps,
+  parent?: ResolvingMetadata
+): Promise<Metadata> {
   const { slug } = params;
 
   const { data } = await client.query<GetPostBySlugQuery>({
