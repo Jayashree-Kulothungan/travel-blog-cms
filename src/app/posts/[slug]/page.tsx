@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import client from '../../../lib/apolloClient';
 import { GetPostBySlugQuery } from '@/generated/graphql';
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import Image from 'next/image';
 
 type PageProps = {
