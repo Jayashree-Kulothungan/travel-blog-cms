@@ -1,63 +1,96 @@
+'use client';
+
 import { gql } from '@apollo/client';
-import client from '@/lib/apolloClient';
-import { Metadata } from 'next';
-import Image from 'next/image';
+import client from '../lib/apolloClient';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
-export const dynamicParams = true;
-
-const GET_POST_BY_SLUG = gql`
-  query GetPostBySlug($slug: ID!) {
-    post(id: $slug, idType: SLUG) {
-      title
-      content
-      featuredImage {
-        node {
-          sourceUrl
+const GET_ALL_POSTS = gql`
+  query GetAllPosts {
+    posts(first: 10) {
+      nodes {
+        slug
+        title
+        postMetadata {
+          location
         }
       }
     }
   }
 `;
 
-type Props = {
-  params: { slug: string };
+type Post = {
+  slug: string;
+  title: string;
+  postMetadata?: {
+    location?: string;
+  };
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+// ✅ Optional: Clean metadata (no params used)
+export async function generateMetadata() {
   return {
-    title: params.slug.replace(/-/g, ' '),
+    title: 'Wanderlust Chronicles – Home',
+    description: 'Explore real travel stories, cultural tips, and beautiful destinations.',
   };
 }
 
-export default async function BlogPostPage({ params }: Props) {
-  const { data } = await client.query({
-    query: GET_POST_BY_SLUG,
-    variables: { slug: params.slug },
-  });
+export default function HomePage() {
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  const post = data?.post;
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
 
-  if (!post) {
-    return <div>Post not found.</div>;
-  }
+    async function fetchPosts() {
+      const { data } = await client.query({ query: GET_ALL_POSTS });
+      setPosts(data?.posts?.nodes || []);
+    }
+
+    fetchPosts();
+  }, []);
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12 text-gray-800">
-      <Link href="/" className="text-blue-600 hover:underline mb-6 inline-block">← Back to Home</Link>
-      <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+    <div className="bg-gray-50 min-h-screen text-gray-800">
+      {/* 🌄 Jumbotron */}
+      <section
+        className="h-[50vh] bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/julian-tong.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-white text-center px-6">
+          <h1 className="text-5xl font-extrabold drop-shadow-md">Wanderlust Chronicles</h1>
+          <p className="mt-4 text-lg drop-shadow-sm">
+            Explore real travel stories, cultural tips, and beautiful destinations.
+          </p>
+        </div>
+      </section>
 
-      {post.featuredImage?.node?.sourceUrl && (
-        <Image
-          src={post.featuredImage.node.sourceUrl}
-          alt={post.title}
-          width={800}
-          height={400}
-          className="rounded-md mb-6"
-        />
-      )}
+      {/* ✨ Intro */}
+      <header className="text-center py-12 px-4">
+        <h2 className="text-3xl font-bold mb-2">Latest Adventures</h2>
+        <p className="text-gray-600">Fresh stories from globetrotters around the world</p>
+      </header>
 
-      <div dangerouslySetInnerHTML={{ __html: post.content }} className="prose max-w-none" />
+      {/* 📌 Blog Cards */}
+      <section className="max-w-6xl mx-auto px-4 pb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {posts.map((post, index) => (
+            <Link key={post.slug} href={`/posts/${post.slug}`}>
+              <div
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
+                className="bg-white rounded-xl shadow hover:shadow-lg transition-all p-6 cursor-pointer"
+              >
+                <h3 className="text-xl font-semibold">{post.title}</h3>
+                {post.postMetadata?.location && (
+                  <p className="text-sm text-gray-600 mt-2">📍 {post.postMetadata.location}</p>
+                )}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
