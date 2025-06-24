@@ -1,7 +1,7 @@
 'use client';
 
 import { gql } from '@apollo/client';
-import client from '../lib/apolloClient';
+import client from '../../lib/apolloClient';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import AOS from 'aos';
@@ -29,15 +29,7 @@ type Post = {
   };
 };
 
-// ✅ Optional: Clean metadata (no params used)
-export async function generateMetadata() {
-  return {
-    title: 'Wanderlust Chronicles – Home',
-    description: 'Explore real travel stories, cultural tips, and beautiful destinations.',
-  };
-}
-
-export default function HomePage() {
+export default function HomePageClient() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
@@ -53,7 +45,6 @@ export default function HomePage() {
 
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800">
-      {/* 🌄 Jumbotron */}
       <section
         className="h-[50vh] bg-cover bg-center relative"
         style={{ backgroundImage: "url('/julian-tong.jpg')" }}
@@ -66,13 +57,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ✨ Intro */}
       <header className="text-center py-12 px-4">
         <h2 className="text-3xl font-bold mb-2">Latest Adventures</h2>
         <p className="text-gray-600">Fresh stories from globetrotters around the world</p>
       </header>
 
-      {/* 📌 Blog Cards */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {posts.map((post, index) => (
