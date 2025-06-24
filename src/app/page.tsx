@@ -1,8 +1,9 @@
 'use client';
+
 import { gql } from '@apollo/client';
 import client from '../lib/apolloClient';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -20,8 +21,16 @@ const GET_ALL_POSTS = gql`
   }
 `;
 
+type Post = {
+  slug: string;
+  title: string;
+  postMetadata?: {
+    location?: string;
+  };
+};
+
 export default function HomePage() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
@@ -43,7 +52,9 @@ export default function HomePage() {
       >
         <div className="absolute inset-0 bg-black bg-opacity-60 flex flex-col justify-center items-center text-white text-center px-6">
           <h1 className="text-5xl font-extrabold drop-shadow-md">Wanderlust Chronicles</h1>
-          <p className="mt-4 text-lg drop-shadow-sm">Explore real travel stories, cultural tips, and beautiful destinations.</p>
+          <p className="mt-4 text-lg drop-shadow-sm">
+            Explore real travel stories, cultural tips, and beautiful destinations.
+          </p>
         </div>
       </section>
 
@@ -56,7 +67,7 @@ export default function HomePage() {
       {/* 📌 Blog Cards */}
       <section className="max-w-6xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {posts.map((post: any, index) => (
+          {posts.map((post, index) => (
             <Link key={post.slug} href={`/posts/${post.slug}`}>
               <div
                 data-aos="fade-up"
