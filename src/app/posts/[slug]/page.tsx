@@ -83,7 +83,6 @@ export default async function PostPage({ params }: PageProps) {
 
 export async function generateMetadata(
   { params }: PageProps,
-  parent?: ResolvingMetadata
 ): Promise<Metadata> {
   const { slug } = params;
 
