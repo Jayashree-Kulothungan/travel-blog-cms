@@ -1,15 +1,9 @@
+// src/app/posts/[slug]/page.tsx
 import { gql } from '@apollo/client';
-import client from '@/lib/apolloClient'; // ✅ your path may vary
+import client from '../../../lib/apolloClient';
 import { GetPostBySlugQuery } from '@/generated/graphql';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation'; // for 404 if slug not found
-
-// ✅ Use correct inferred type
-type Props = {
-  params: {
-    slug: string;
-  };
-};
+import Image from 'next/image';
 
 const GET_POST_BY_SLUG = gql`
   query GetPostBySlug($slug: ID!) {
@@ -31,58 +25,26 @@ const GET_POST_BY_SLUG = gql`
   }
 `;
 
-export default async function PostPage({ params }: Props) {
-  const { slug } = params;
-
-  const { data } = await client.query<GetPostBySlugQuery>({
-    query: GET_POST_BY_SLUG,
-    variables: { slug },
+export async function generateStaticParams() {
+  const res = await client.query({
+    query: gql`
+      query GetAllSlugs {
+        posts {
+          nodes {
+            slug
+          }
+        }
+      }
+    `,
   });
 
-  const post = data?.post;
-
-  if (!post) return notFound(); // 👈 handles invalid slugs
-
-  const title = post.title ?? 'Untitled Post';
-  const image = post.featuredImage?.node?.sourceUrl ?? '';
-  const content = post.content ?? '';
-  const location = post.postMetadata?.location;
-  const rating = post.postMetadata?.tripRating;
-  const mapLink = post.postMetadata?.mapLink;
-
-  return (
-    <main className="max-w-3xl mx-auto p-6 sm:p-10 bg-white shadow-md mt-10 rounded-lg">
-      <a href="/" className="text-blue-600 hover:underline text-sm mb-4 block">← Back to Home</a>
-
-      {image && (
-        <img
-          src={image}
-          alt={title}
-          className="w-full h-64 object-cover rounded mb-6"
-        />
-      )}
-
-      <h1 className="text-3xl font-bold mb-4">{title}</h1>
-
-      {location && <p className="text-gray-700 mb-2"><strong>📍 Location:</strong> {location}</p>}
-      {rating && <p className="text-gray-700 mb-2"><strong>⭐ Trip Rating:</strong> {rating}</p>}
-      {mapLink && (
-        <p className="mb-4">
-          <a href={mapLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-            View on Map
-          </a>
-        </p>
-      )}
-
-      <div
-        className="prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
-    </main>
-  );
+  return res.data.posts.nodes.map((post: { slug: string }) => ({
+    slug: post.slug,
+  }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: any): Promise<Metadata> {
+
   const { slug } = params;
 
   const { data } = await client.query<GetPostBySlugQuery>({
@@ -91,12 +53,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 
   const post = data?.post;
-
-  if (!post) return { title: 'Post Not Found' };
-
-  const title = post.title ?? 'Travel Blog';
-  const description = post.excerpt?.replace(/<[^>]+>/g, '') ?? '';
-  const image = post.featuredImage?.node?.sourceUrl ?? '';
+  const title = post?.title ?? 'Travel Blog';
+  const description = post?.excerpt?.replace(/<[^>]+>/g, '') ?? '';
+  const image = post?.featuredImage?.node?.sourceUrl ?? '';
 
   return {
     title: `${title} | Travel Blog`,
@@ -114,3 +73,65 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
   };
 }
+export default async function PostPage({ params }: any) {
+  const { slug } = params;
+
+  const { data } = await client.query<GetPostBySlugQuery>({
+    query: GET_POST_BY_SLUG,
+    variables: { slug },
+  });
+
+  const post = data?.post;
+
+  if (!post) {
+    return <div className="text-center text-red-600">Post not found.</div>;
+  }
+
+  return (
+    <main className="max-w-3xl mx-auto p-6 sm:p-10 bg-white shadow-md mt-10 rounded-lg">
+      <a href="/" className="text-blue-600 hover:underline text-sm mb-4 block">
+        ← Back to Home
+      </a>
+
+      {post?.featuredImage?.node?.sourceUrl && (
+        <Image
+          src={post.featuredImage.node.sourceUrl}
+          alt={post.title ?? 'Blog Featured Image'}
+          className="w-full h-64 object-cover rounded mb-6"
+          width={800}
+          height={400}
+        />
+      )}
+
+      <h1 className="text-3xl font-bold mb-4">{post?.title}</h1>
+      {post?.postMetadata?.location && (
+        <p className="text-gray-700 mb-2">
+          <strong>📍 Location:</strong> {post.postMetadata.location}
+        </p>
+      )}
+      {post?.postMetadata?.tripRating && (
+        <p className="text-gray-700 mb-2">
+          <strong>⭐ Trip Rating:</strong> {post.postMetadata.tripRating}
+        </p>
+      )}
+      {post?.postMetadata?.mapLink && (
+        <p className="mb-4">
+          <a
+            href={post.postMetadata.mapLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:underline"
+          >
+            View on Map
+          </a>
+        </p>
+      )}
+
+      <div
+        className="prose max-w-none"
+        dangerouslySetInnerHTML={{ __html: post?.content ?? '' }}
+      />
+    </main>
+  );
+}
+
