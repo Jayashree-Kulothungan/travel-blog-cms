@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client';
-import client from '../../../lib/apolloClient';
+import client from '@/lib/apolloClient'; // ✅ your path may vary
 import { GetPostBySlugQuery } from '@/generated/graphql';
 import { Metadata } from 'next';
-import Image from 'next/image';
+import { notFound } from 'next/navigation'; // for 404 if slug not found
 
-type PageProps = {
+// ✅ Use correct inferred type
+type Props = {
   params: {
     slug: string;
   };
@@ -30,8 +31,8 @@ const GET_POST_BY_SLUG = gql`
   }
 `;
 
-export default async function PostPage({ params }: PageProps) {
-  const slug = params.slug;
+export default async function PostPage({ params }: Props) {
+  const { slug } = params;
 
   const { data } = await client.query<GetPostBySlugQuery>({
     query: GET_POST_BY_SLUG,
@@ -40,23 +41,23 @@ export default async function PostPage({ params }: PageProps) {
 
   const post = data?.post;
 
-  const title = post?.title ?? 'Untitled Post';
-  const image = post?.featuredImage?.node?.sourceUrl ?? '';
-  const content = post?.content ?? '';
-  const location = post?.postMetadata?.location;
-  const rating = post?.postMetadata?.tripRating;
-  const mapLink = post?.postMetadata?.mapLink;
+  if (!post) return notFound(); // 👈 handles invalid slugs
+
+  const title = post.title ?? 'Untitled Post';
+  const image = post.featuredImage?.node?.sourceUrl ?? '';
+  const content = post.content ?? '';
+  const location = post.postMetadata?.location;
+  const rating = post.postMetadata?.tripRating;
+  const mapLink = post.postMetadata?.mapLink;
 
   return (
     <main className="max-w-3xl mx-auto p-6 sm:p-10 bg-white shadow-md mt-10 rounded-lg">
       <a href="/" className="text-blue-600 hover:underline text-sm mb-4 block">← Back to Home</a>
-      
+
       {image && (
-        <Image
+        <img
           src={image}
           alt={title}
-          width={1200}
-          height={400}
           className="w-full h-64 object-cover rounded mb-6"
         />
       )}
@@ -81,9 +82,7 @@ export default async function PostPage({ params }: PageProps) {
   );
 }
 
-export async function generateMetadata(
-  { params }: PageProps,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = params;
 
   const { data } = await client.query<GetPostBySlugQuery>({
@@ -93,9 +92,11 @@ export async function generateMetadata(
 
   const post = data?.post;
 
-  const title = post?.title ?? 'Travel Blog';
-  const description = post?.excerpt?.replace(/<[^>]+>/g, '') ?? '';
-  const image = post?.featuredImage?.node?.sourceUrl ?? '';
+  if (!post) return { title: 'Post Not Found' };
+
+  const title = post.title ?? 'Travel Blog';
+  const description = post.excerpt?.replace(/<[^>]+>/g, '') ?? '';
+  const image = post.featuredImage?.node?.sourceUrl ?? '';
 
   return {
     title: `${title} | Travel Blog`,
