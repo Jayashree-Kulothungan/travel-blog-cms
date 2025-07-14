@@ -1,10 +1,9 @@
 services:
   - type: web
-    name: travel-blog-frontend
-    env: node
+    name: travel-blog-cms-wp
+    env: docker
     plan: free
-    buildCommand: npm install && npm run build
-    startCommand: npm run start
-    envVars:
-      - key: NEXT_PUBLIC_WORDPRESS_GRAPHQL_ENDPOINT
-        value: https://your-wordpress-backend-url/graphql
+    dockerfilePath: Dockerfile
+    buildFilter:
+      paths:
+        - docker-compose.yml
