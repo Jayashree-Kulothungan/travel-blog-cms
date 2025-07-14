@@ -3,7 +3,16 @@ services:
     name: travel-blog-cms-wp
     env: docker
     plan: free
-    dockerfilePath: Dockerfile
+    dockerfilePath: ./Dockerfile
     buildFilter:
       paths:
         - docker-compose.yml
+    envVars:
+      - key: WORDPRESS_DB_HOST
+        value: db:3306
+      - key: WORDPRESS_DB_USER
+        value: wp_user
+      - key: WORDPRESS_DB_PASSWORD
+        value: wp_pass
+      - key: WORDPRESS_DB_NAME
+        value: wp_db
