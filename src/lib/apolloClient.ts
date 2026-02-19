@@ -9,14 +9,8 @@ if (!graphqlEndpoint) {
 const client = new ApolloClient({
   link: new HttpLink({
     uri: graphqlEndpoint,
-    fetchOptions: { cache: 'no-store' },
   }),
   cache: new InMemoryCache(),
-  defaultOptions: {
-    query: {
-      fetchPolicy: 'no-cache',
-    },
-  },
 });
 
 export default client;
