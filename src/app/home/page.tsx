@@ -115,12 +115,11 @@ let posts: NonNullable<GetAllPostsQuery['posts']>['nodes'] = [];
                     <article className="h-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                       <div className="relative h-48 overflow-hidden bg-gray-100">
                         {imageUrl ? (
-                          <Image
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
                             src={imageUrl}
                             alt={post.title ?? ''}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--color-sand)' }}>

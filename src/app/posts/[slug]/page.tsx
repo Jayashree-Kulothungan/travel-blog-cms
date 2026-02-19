@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import client from '@/lib/apolloClient';
 import { GetPostBySlugQuery } from '@/generated/graphql';
 import { Metadata } from 'next';
-import Image from 'next/image';
+// import Image from 'next/image';
 import Link from 'next/link';
 import { cache } from 'react';
 
@@ -136,17 +136,15 @@ export default async function PostPage({ params }: PageProps) {
       {/* Hero image or colored header */}
       <div className="relative w-full h-72 md:h-96 overflow-hidden">
         {post.featuredImage?.node?.sourceUrl ? (
-          <>
-            <Image
-              src={post.featuredImage.node.sourceUrl}
-              alt={post.title ?? 'Featured image'}
-              fill
-              className="object-cover"
-              priority
-              sizes="100vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          </>
+  <>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src={post.featuredImage.node.sourceUrl}
+      alt={post.title ?? 'Featured image'}
+      className="w-full h-full object-cover"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+  </>
         ) : (
           <div className="w-full h-full" style={{ backgroundColor: 'var(--color-ink)' }} />
         )}
