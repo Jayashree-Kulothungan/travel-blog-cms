@@ -35,8 +35,7 @@ const GET_ALL_POSTS = gql`
 `;
 
 export default async function HomePage() {
-  let posts: GetAllPostsQuery['posts']['nodes'] = [];
-
+let posts: NonNullable<GetAllPostsQuery['posts']>['nodes'] = [];
   try {
     const { data } = await client.query<GetAllPostsQuery>({
       query: GET_ALL_POSTS,
