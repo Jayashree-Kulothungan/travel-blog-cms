@@ -6,11 +6,19 @@ if (!graphqlEndpoint) {
   throw new Error('❌ GraphQL endpoint is missing.');
 }
 
+// Strip credentials from URL and pass them as a header instead
+const url = new URL(graphqlEndpoint);
+const credentials = url.username && url.password
+  ? btoa(`${url.username}:${url.password}`)
+  : null;
+url.username = '';
+url.password = '';
+
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: graphqlEndpoint,
+    uri: url.toString(),
     headers: {
-      'ngrok-skip-browser-warning': 'true',
+      ...(credentials && { Authorization: `Basic ${credentials}` }),
     },
   }),
   cache: new InMemoryCache(),
