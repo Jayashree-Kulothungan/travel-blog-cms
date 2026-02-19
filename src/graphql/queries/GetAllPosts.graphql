@@ -1,0 +1,17 @@
+query GetAllPosts {
+  posts(first: 10) {
+    nodes {
+      slug
+      title
+      excerpt
+      postMetadata {
+        location
+      }
+      featuredImage {
+        node {
+          sourceUrl
+        }
+      }
+    }
+  }
+}

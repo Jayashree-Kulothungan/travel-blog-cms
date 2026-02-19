@@ -1,0 +1,15 @@
+fragment PostFields on Post {
+	title
+	content
+	excerpt
+	featuredImage {
+		node {
+			sourceUrl
+		}
+	}
+	postMetadata {
+		location
+		tripRating
+		mapLink
+	}
+}

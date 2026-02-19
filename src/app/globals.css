@@ -1,0 +1,24 @@
+@import "aos/dist/aos.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--color-sand: #f5f0e8;
+		--color-ink: #1a1612;
+		--color-rust: #c0392b;
+		--color-gold: #d4a042;
+		--color-muted: #8c7b6e;
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		background-color: var(--color-sand);
+		color: var(--color-ink);
+	}
+}
