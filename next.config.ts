@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "naive-iron.localsite.io",
+      },
+      {
+        protocol: "https",
+        hostname: "*.localsite.io",
+      },
+      {
         protocol: "http",
         hostname: "**",
       },
