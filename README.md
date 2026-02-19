@@ -4,14 +4,14 @@ A headless travel blog built with **WordPress** (CMS/GraphQL API) + **Next.js 15
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| CMS | WordPress 6.5 + WPGraphQL plugin |
-| Frontend | Next.js 15 (App Router) |
-| Data fetching | Apollo Client (server-side, ISR) |
-| Styling | Tailwind CSS v3 + `@tailwindcss/typography` |
-| Type safety | GraphQL Code Generator |
-| Animations | AOS (Animate on Scroll) |
+| Layer         | Technology                                  |
+| ------------- | ------------------------------------------- |
+| CMS           | WordPress 6.5 + WPGraphQL plugin            |
+| Frontend      | Next.js 15 (App Router)                     |
+| Data fetching | Apollo Client (server-side, ISR)            |
+| Styling       | Tailwind CSS v3 + `@tailwindcss/typography` |
+| Type safety   | GraphQL Code Generator                      |
+| Animations    | AOS (Animate on Scroll)                     |
 
 ## Getting Started
 
@@ -78,3 +78,17 @@ src/
 ## Docker
 
 See the `Dockerfile` for a multi-stage Next.js production build and an example `docker-compose.yml` configuration that ties WordPress, MySQL, and Next.js together.
+
+## Preview
+
+![Homepage](screenshots/schome1.png)
+
+![Homepage](screenshots/schome2.png)
+
+![Post Page](screenshots/scpost1.png)
+
+![Post Page](screenshots/scpost2.png)
+
+![Post Page](screenshots/scpost3.png)
+
+![Post Page](screenshots/scpost4.png)
